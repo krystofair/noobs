@@ -50,7 +50,8 @@ def exp_ps1_formats(onl=''):
         r"($(__git_ps1 %s)) [\u@\h] \w<ONL>$ ",
         r"\u@\h \w ($(__git_ps1 %s))<ONL>$ ",
         r"\u@\h \e[33m\w\e[00m ($(__git_ps1 %s))<ONL>$ ",
-        r"\u@\h \e[33m\w\e[00m $(__git_ps1 %s)<ONL>$ "
+        r"\u@\h \e[33m\w\e[00m $(__git_ps1 %s)<ONL>$ ",
+        r"\u@\h \e[33m\w\e[00m $(__git_ps1 %s)<ONL>$(date +[%H:%M])$ "
     ]
     return [x.replace('<ONL>', onl) for x in ps1_formats]
 
@@ -138,7 +139,7 @@ def test_user_install_colored(off_all_choices):
 
 def test_choosen_format(off_all_choices):
     user_inputs = off_all_choices
-    possible_formats_choices = range(1, len(exp_ps1_formats()))
+    possible_formats_choices = range(1, len(exp_ps1_formats())+1)
     for format_nr in possible_formats_choices:
         user_inputs[7] = str(format_nr)
         for new_line_before_dollar in ['n', '', 'y']:
