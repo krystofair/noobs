@@ -40,20 +40,24 @@ SCRIPT_PATH="/usr/src/noobs/actions/chce_git_status_PS1.sh"
 USER_BASHRC_FILE = f"{os.environ['HOME']}/.bashrc"
 
 
-def exp_ps1_formats(onl=''):
+def exp_ps1_formats(onl='', shell='bash'):
     """
     Returns list of good format, but in regex format because of some optional chars.
     Pass arguments to get concrete version of PS1 formats.
     """
-    ps1_formats = [
-        r"($(__git_ps1 %s))[\u@\h] \w<ONL>$ ",
-        r"($(__git_ps1 %s)) [\u@\h] \w<ONL>$ ",
-        r"\u@\h \w ($(__git_ps1 %s))<ONL>$ ",
-        r"\u@\h \e[33m\w\e[00m ($(__git_ps1 %s))<ONL>$ ",
-        r"\u@\h \e[33m\w\e[00m $(__git_ps1 %s)<ONL>$ ",
-        r"\u@\h \e[33m\w\e[00m $(__git_ps1 %s)<ONL>$(date +[%H:%M])$ "
-    ]
-    return [x.replace('<ONL>', onl) for x in ps1_formats]
+    ps1_formats = []
+    if shell == 'bash' or shell == 'sh':
+        ps1_formats = [
+            r"($(__git_ps1 %s))[\u@\h] \w<ONL>$ ",
+            r"($(__git_ps1 %s)) [\u@\h] \w<ONL>$ ",
+            r"\u@\h \w ($(__git_ps1 %s))<ONL>$ ",
+            r"\u@\h \e[33m\w\e[00m ($(__git_ps1 %s))<ONL>$ ",
+            r"\u@\h \e[33m\w\e[00m $(__git_ps1 %s)<ONL>$ ",
+            r"\u@\h \e[33m\w\e[00m $(__git_ps1 %s)<ONL>$(date +[%H:%M])$ "
+        ]
+        ps1_formats = [x.replace('<ONL>', onl) for x in ps1_format]
+
+    return ps1_formats
 
 
 
@@ -137,6 +141,9 @@ def test_user_install_colored(off_all_choices):
                     "GIT_PS1_SHOWCOLORHINTS not found"
 
 
+@pytest.mark.skipif(os.environ.get('SHELL', 'empty').upper() != 'BASH' or
+                    os.environ.get('SHELL', 'empty').upper() != 'SH',
+                    reason="Feature is not accessible in other shell then bash")
 def test_choosen_format(off_all_choices):
     user_inputs = off_all_choices
     possible_formats_choices = range(1, len(exp_ps1_formats())+1)
